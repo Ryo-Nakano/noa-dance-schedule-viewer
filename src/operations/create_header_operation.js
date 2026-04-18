@@ -30,6 +30,8 @@ export class CreateHeaderOperation extends BaseOperation {
     // 1行目にヘッダーを上書き
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     
+    SpreadsheetApp.getUi().alert('ヘッダー行の作成が完了しました。');
+    
     return true; // 成功を表すためにtrueを返す
   }
 }
