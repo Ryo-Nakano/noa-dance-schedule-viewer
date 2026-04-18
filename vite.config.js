@@ -9,13 +9,22 @@ export default defineConfig({
     {
       name: 'copy-appsscript-json', // カスタムプラグインの名前
       writeBundle() {
-        const srcFile = path.resolve(__dirname, 'appsscript.json'); // コピー元のパス
-        const destDir = path.resolve(__dirname, 'dist'); // コピー先のディレクトリ
-        const destFile = path.join(destDir, 'appsscript.json'); // コピー先のファイルパス
-
+        const destDir = path.resolve(__dirname, 'dist');
         if (!fs.existsSync(destDir)) fs.mkdirSync(destDir);
+        
+        // Copy appsscript.json
+        const srcFile = path.resolve(__dirname, 'appsscript.json');
+        const destFile = path.join(destDir, 'appsscript.json');
         fs.copyFileSync(srcFile, destFile);
         console.log('appsscript.json has been copied to dist folder');
+        
+        // Copy dialog.html
+        const srcHtml = path.resolve(__dirname, 'src/dialog.html');
+        const destHtml = path.join(destDir, 'dialog.html');
+        if (fs.existsSync(srcHtml)) {
+          fs.copyFileSync(srcHtml, destHtml);
+          console.log('dialog.html has been copied to dist folder');
+        }
       }
     }
   ],

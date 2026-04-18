@@ -1,40 +1,21 @@
-# JavaScript & Vite を使った GoogleAppsScript 開発テンプレート
+# Noa Dance Schedule Viewer
 
-これは JavaScript と Vite を使用した GoogleAppsScript (GAS) 開発のための最小構成テンプレートです。
+本プロジェクトは、ノアダンスアカデミーのレッスン情報が記載されたJSONデータを解析し、Google スプレッドシート上に扱いやすい表形式で展開するための Google Apps Script (GAS) アプリケーションです。
+バックエンドは JavaScript (ES Modules) を使用し、Vite によってバンドル・デプロイされる仕組みを採用しています。
 
-## 📚 特徴
-- JavaScript (ES Modules) での開発
-- Vite を使用したバンドル (npm モジュールが利用可能)
-- ローカルでの開発と Clasp を使用したデプロイ
+## 🚀 セットアップ・デプロイ方法
 
-## 🏃‍♂️ 始め方
+本プロジェクトを自身の Google スプレッドシートに紐づける手順です。
 
-#### 1. [Use this template] ボタンをクリック
-<img width="473" alt="matcher-inc_gas-template-sample__TypeScript___Webpack___Clasp_で_GAS_の開発を始められるテンプレート作ってみる試み" src="https://user-images.githubusercontent.com/78125846/192661673-6bc8dbc4-fd4c-4d02-ab74-c6808dbb31de.png">
+#### 1. 前提条件のインストール
+Node.js および npm がインストールされている環境で、以下のコマンドを実行して依存パッケージをインストールします。
 
-#### 2. リポジトリをクローン
 ```bash
-git clone <Your template url> my-gas-project
-
- or
-
-# テンプレートとして使用しない場合
-git clone git@github.com:basefood/gas-development-template-2.git my-gas-project
-```
-
-#### 3. ディレクトリを移動
-```
-cd my-gas-project
-```
-
-#### 4. npm 依存関係をインストール
-```
 npm install
 ```
 
-#### 5. `.clasp.json` を作成し、スクリプトIDを貼り付け
-
-ルートディレクトリに `.clasp.json` というファイルを作成し、以下の内容を貼り付けてください：
+#### 2. スクリプトIDの設定
+ルートディレクトリに `.clasp.json` を作成し、連携先スプレッドシートのスクリプトIDを設定してください。
 
 ```json
 {
@@ -43,97 +24,81 @@ npm install
 }
 ```
 
-#### 6. clasp を初めて使う場合は、以下のコマンドを実行して認証
- 
-```
+#### 3. 認証とデプロイ
+clasp コマンドを有効にするため、初回はログインを行います。
+
+```bash
 npx clasp login
 ```
 
-## 🛠️ 開発ガイド
+以下のコマンドでプロジェクトをビルドし、GAS 上にデプロイします。
 
-### 1. 新しい Operation (機能) の作成
-ビジネスロジックは「Operation」クラス内にカプセル化します。
-`src/operations/` 内に新しいファイルを作成し（例: `src/operations/my_feature.js`）、`BaseOperation` を継承します。
-
-必ず `_operation()` メソッドを実装する必要があります。
-
-```javascript
-import { BaseOperation } from '@/base_classes/base_operation';
-
-export class MyFeatureOperation extends BaseOperation {
-  _operation() {
-    // ここにビジネスロジックを記述します
-    console.log("My feature is running!");
-    
-    // ヘルパーメソッドを利用できます
-    // const sheet = this._getSheet('Sheet1');
-  }
-}
-```
-
-### 2. `index.js` への登録
-Apps Script 側（トリガーやボタン）から関数を呼び出せるようにするには、`src/index.js` に登録します。
-
-```javascript
-import { MyFeatureOperation } from '@/operations/my_feature';
-
-// 'myFeature' という関数名で Apps Script から利用可能になります
-global.myFeature = () => {
-  const operation = new MyFeatureOperation();
-  operation.run();
-};
-```
-
-### 3. シートデータの管理 (任意)
-スプレッドシートのデータを構造的に扱うには、`BoundSheetData`（アクティブなスプレッドシート用）または `BaseSheetData` を継承したクラスを作成します。
-
-```javascript
-import { BoundSheetData } from '@/base_classes/base_sheet_data';
-
-export class UsersSheetData extends BoundSheetData {
-  // 特定のシートを返すようにオーバーライド
-  static get sheet() {
-    return this._getSheet('Users');
-  }
-  
-  // データを取得するメソッドの例
-  static getAllUsers() {
-    const sheet = this.sheet;
-    return sheet.getDataRange().getValues();
-  }
-}
-```
-
-### 4. SheetUtils の活用
-`src/utils/sheet_utils.js` には、シート操作のための便利なユーティリティが用意されています。
-
-```javascript
-import { SheetUtils } from '@/utils/sheet_utils';
-
-// 名前付き範囲の列番号を取得
-const cols = SheetUtils.getNamedRangeColsOf(sheet);
-
-// 最終行にデータを追加
-SheetUtils.addToLastRow({ sheet, data: [[1, 2, 3]] });
-
-// 指定行以降をクリア
-SheetUtils.clearSheetContent({ sheet, fromRow: 2 });
-```
-
-## 🚀 コマンド
 ```bash
-# vite build (ビルド)
-npm run build
-
-# vite build --watch (ウォッチモードでビルド)
-npm run build:watch
-
-# clasp push (GASへアップロード)
-npm run push
-
-# clasp push --watch (ウォッチモードでアップロード)
-npm run push:watch
-
-# ビルドしてアップロード
 npm run deploy
 ```
+※ 手動でビルドのみを行う場合は `npm run build` を使用してください。
+
+---
+
+## 💡 利用方法
+
+本スクリプトを紐付与したスプレッドシートを開くと、独自のカスタムメニューが表示されます。
+
+### 初期設定: ヘッダー行の作成
+1. スプレッドシート内に「**lessons**」という名前のシートを事前に作成しておきます。
+2. 上部メニューから **「DeveloperTools」 > 「lessons にヘッダー行を作成」** をクリックします。
+3. A列〜O列の1行目に、システムが要求する15項目のヘッダーが自動で設定されます（※すでにデータがある場合、1行目は無条件で上書きされます）。
+
+### JSONデータのアップロード
+1. 上部メニューから **「カンタン操作」 > 「JSONデータをアップロード」** をクリックします。
+2. 専用のダイアログが立ち上がります。
+3. アップロードしたい JSON ファイルを点線枠内（ドロップゾーン）に**ドラッグ＆ドロップ**するか、クリックしてファイルを選択します。
+4. 「アップロード」ボタンを押すとデータが送信され、`lessons` シートの2行目以降にデータが展開されます。
+※ アップロードの度、2行目以降の既存データはすべてクリアされ、全件上書き（洗い替え）されます。
+
+---
+
+## 📊 データ仕様・マッピング
+
+JSON ファイル内の `body.Items[].time_list[].record[]` 階層をパースし、以下の規則で各列へデータを出力（マッピング）します。配列内に存在しない項目や空要素については、空文字として処理されます。
+また、日付（`YYYYMMDD`）は `YYYY/MM/DD` 形式へ自動変換されます。
+
+| 列位置 | 出力項目名（ヘッダー） | 抽出元 JSONパス | 備考・加工処理 |
+| --- | --- | --- | --- |
+| A列 | レッスンID | `record[].SEQ` | |
+| B列 | 日付 | `record[].HIDUKE` | `YYYYMMDD` を `YYYY/MM/DD` に変換 |
+| C列 | 曜日 | `Items[].YOUBI` | 親階層(`Items`)から取得 |
+| D列 | 開始時間 | `record[].Y_TIME_START` | |
+| E列 | 終了時間 | `record[].Y_TIME_END` | |
+| F列 | 店舗名 | `record[].TENPO_NAME` | |
+| G列 | スタジオ名 | `record[].STUDIO_NAME` | |
+| H列 | ジャンル | `record[].GENRE_SUB_NAME` | |
+| I列 | レベル | `record[].LEVEL_NAME` | |
+| J列 | インストラクター名 | `record[].INSTRUCTOR_NAME` | |
+| K列 | ニックネーム | `record[].NICKNAME` | |
+| L列 | 女性限定 | `record[].WOMAN_FLG` | |
+| M列 | 男性限定 | `record[].MAN_FLG` | |
+| N列 | URL | `record[].URL` | |
+| O列 | インストラクター画像 | `record[].INSTRUCTOR_IMG` | |
+
+
+---
+
+## 🛠 開発者向けガイド (Developer Guide)
+
+本ツールはクラスベースの拡張しやすい設計に基づいています。
+
+#### 主なディレクトリ構造
+* **`src/operations/`**
+  ビジネスロジックの中核を定義する場所です。
+  * `json_upload_operation.js` : JSONデータのパースとシートへの書き込みを司ります。
+  * `create_header_operation.js` : ヘッダー生成処理を担当します。
+  すべて `BaseOperation` を継承して構築されており、フロントエンド（`dialog.html`）との連携や例外管理が統一されています。
+* **`src/base_classes/`**
+  `BaseOperation` や `BaseSheetData` などのベース（親）クラス定義が存在します。
+* **`src/index.js`**
+  GAS側（トリガーやダイアログ経由）からアクセス可能なエントリポイント（関数）を `global` オブジェクトに登録する設定ファイルです。UIメニューの構築もここで行われます。
+* **`src/dialog.html`**
+  モーダルダイアログのUI。CSSスコープのインライン化および JSイベントリスナーの設定が含まれます。Vite設定によりビルド時にそのまま `dist` フォルダへ転送されるようになっています。
+
+機能追加の際は、新規 Operation クラスを作成し、`index.js` でバインディングする流れが基本となります。
