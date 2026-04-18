@@ -18,6 +18,8 @@
 
 ## 3. コードの構造と設計方針 (Architecture & Design Patterns)
 
+詳細は ARCHITECTURE.md を参照。
+
 #### Operationクラスの責務
 -   ユーザーの1つの操作（メニューの1項目など）は、原則として1つの`Operation`クラスに対応させます。
 -   `Operation`クラスは必ず`base_classes/base_operation.js`の`BaseOperation`を継承してください。
