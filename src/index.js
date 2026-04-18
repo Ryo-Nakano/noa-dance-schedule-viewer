@@ -4,17 +4,21 @@ import { CreateHeaderOperation } from '@/operations/create_header_operation.js';
 import { JsonUploadOperation } from '@/operations/json_upload_operation.js';
 
 global.onOpen = () => {
-  new CreateMenuOperation().run();
+  const operation = new CreateMenuOperation();
+  operation.run();
 };
 
-global.createLessonsHeader = () => {
-  new CreateHeaderOperation().run();
+global.createLessonsHeaderOperation = () => {
+  const operation = new CreateHeaderOperation();
+  operation.run();
 };
 
-global.openUploadDialog = () => {
-  new OpenUploadDialogOperation().run();
+global.openUploadDialogOperation = () => {
+  const operation = new OpenUploadDialogOperation();
+  operation.run();
 };
 
-global.processJsonUpload = (jsonString) => {
-  return new JsonUploadOperation(jsonString).run();
+global.processJsonUploadOperation = (jsonString) => {
+  const operation = new JsonUploadOperation(jsonString);
+  return operation.run();
 };

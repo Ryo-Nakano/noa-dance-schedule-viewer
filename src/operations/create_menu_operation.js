@@ -6,12 +6,12 @@ export class CreateMenuOperation extends BaseOperation {
 
     // ユーザー向けメニュー
     ui.createMenu('カンタン操作')
-      .addItem('JSONデータをアップロード', 'openUploadDialog')
+      .addItem('JSONデータをアップロード', 'openUploadDialogOperation')
       .addToUi();
 
     // 開発者向けメニュー
     ui.createMenu('DeveloperTools')
-      .addItem('lessons にヘッダー行を作成', 'createLessonsHeader')
+      .addItem('lessons にヘッダー行を作成', 'createLessonsHeaderOperation')
       .addToUi();
   }
 }
