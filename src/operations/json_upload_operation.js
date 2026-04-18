@@ -74,6 +74,7 @@ export class JsonUploadOperation extends BaseOperation {
       const lastRow = sheet.getLastRow();
       if (lastRow >= 2) {
         sheet.getRange(2, 1, lastRow - 1, 15).clearContent();
+        SpreadsheetApp.flush();
       }
 
       // データ書き込み
