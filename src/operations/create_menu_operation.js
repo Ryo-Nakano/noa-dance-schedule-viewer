@@ -6,7 +6,8 @@ export class CreateMenuOperation extends BaseOperation {
 
     // ユーザー向けメニュー
     ui.createMenu('カンタン操作')
-      .addItem('JSONデータをアップロード', 'openUploadDialogOperation')
+      .addItem('最新データを取得', 'updateLessonsOperation')
+      .addItem('JSONデータを手動アップロード', 'openUploadDialogOperation')
       .addToUi();
 
     // 開発者向けメニュー
