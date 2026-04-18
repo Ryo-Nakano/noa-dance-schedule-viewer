@@ -3,10 +3,14 @@
   <head>
     <base target="_top">
     <style>
+      html, body {
+        height: 100%;
+      }
       body {
         font-family: sans-serif;
         padding: 15px;
         margin: 0;
+        box-sizing: border-box;
       }
       .container {
         display: flex;
@@ -65,10 +69,33 @@
         background-color: #e0e0e0;
         color: #9e9e9e;
       }
+      #loadingOverlay {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+      }
+      .css-spinner {
+        display: inline-block;
+        box-sizing: border-box;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e0e0e0;
+        border-top: 4px solid #1a73e8;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 12px;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
-    <div class="container">
+    <div id="mainContent" class="container">
       <div id="dropZone" class="drop-zone">
         <div id="dropStatus">
           <p>ここにJSONファイルをドラッグ&ドロップ</p>
@@ -81,19 +108,39 @@
       </div>
       <div id="statusMessage"></div>
     </div>
+
+    <!-- ロード画面 -->
+    <div id="loadingOverlay">
+      <div class="css-spinner"></div>
+      <div style="font-size: 16px; color: #333; font-weight: 500;">アップロード中...</div>
+    </div>
     
     <script>
       let selectedFile = null;
       
+      const mainContent = document.getElementById('mainContent');
+      const loadingOverlay = document.getElementById('loadingOverlay');
       const dropZone = document.getElementById('dropZone');
       const fileInput = document.getElementById('jsonFile');
       const dropStatus = document.getElementById('dropStatus');
       const statusDiv = document.getElementById('statusMessage');
       const uploadBtn = document.getElementById('uploadBtn');
 
+      // UIの状態をリセット（アップロード失敗時用）
+      function resetUIState() {
+        mainContent.style.display = 'flex';
+        loadingOverlay.style.display = 'none';
+        uploadBtn.disabled = false;
+        fileInput.disabled = false;
+        dropZone.style.pointerEvents = 'auto';
+        dropZone.style.opacity = '1';
+      }
+
       // クリックでファイルダイアログを開く
       dropZone.addEventListener('click', function() {
-        fileInput.click();
+        if (!fileInput.disabled) {
+          fileInput.click();
+        }
       });
 
       fileInput.addEventListener('change', function(e) {
@@ -105,15 +152,18 @@
       // D&D イベントのハンドリング
       dropZone.addEventListener('dragover', function(e) {
         e.preventDefault();
+        if (fileInput.disabled) return;
         dropZone.classList.add('dragover');
       });
 
       dropZone.addEventListener('dragleave', function() {
+        if (fileInput.disabled) return;
         dropZone.classList.remove('dragover');
       });
 
       dropZone.addEventListener('drop', function(e) {
         e.preventDefault();
+        if (fileInput.disabled) return;
         dropZone.classList.remove('dragover');
 
         if (e.dataTransfer.files.length > 0) {
@@ -137,9 +187,15 @@
 
         const reader = new FileReader();
 
-        statusDiv.innerText = '処理中...';
-        statusDiv.className = '';
+        // 画面をロード表示に切り替え
+        mainContent.style.display = 'none';
+        loadingOverlay.style.display = 'flex';
+
+        // ファイル操作やアップロードボタンを無効化
         uploadBtn.disabled = true;
+        fileInput.disabled = true;
+        dropZone.style.pointerEvents = 'none';
+        dropZone.style.opacity = '0.5';
 
         reader.onload = function(e) {
           const contents = e.target.result;
@@ -147,18 +203,18 @@
           google.script.run
             .withSuccessHandler(function(response) {
               if (response.status === 'success') {
-                statusDiv.innerText = response.count + '件のデータを更新しました。';
-                statusDiv.className = 'success';
+                alert(response.count + '件のデータを更新しました。');
+                google.script.host.close();
               } else {
                 statusDiv.innerText = response.message;
                 statusDiv.className = 'error';
-                uploadBtn.disabled = false;
+                resetUIState();
               }
             })
             .withFailureHandler(function(error) {
               statusDiv.innerText = '通信エラーが発生しました。もう一度お試しください。\n' + (error.message || '');
               statusDiv.className = 'error';
-              uploadBtn.disabled = false;
+              resetUIState();
             })
             .processJsonUpload(contents);
         };
@@ -166,7 +222,7 @@
         reader.onerror = function() {
           statusDiv.innerText = 'ファイルの読み込みに失敗しました。';
           statusDiv.className = 'error';
-          uploadBtn.disabled = false;
+          resetUIState();
         };
 
         reader.readAsText(selectedFile);
