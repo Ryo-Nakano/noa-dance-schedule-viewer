@@ -42,6 +42,7 @@ export class Lessons extends BoundSheetData {
             isManOnly: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.IS_MAN_ONLY] - 1],
             url: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.URL] - 1],
             instructorImageUrl: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.INSTRUCTOR_IMAGE_URL] - 1],
+            genreLabel: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.GENRE_LABEL] - 1],
           });
         });
     };

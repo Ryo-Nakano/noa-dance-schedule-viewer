@@ -78,7 +78,7 @@
 
         data.forEach(item => {
           if (item.storeName) options.storeName.add(item.storeName);
-          if (item.genre) options.genre.add(item.genre);
+          if (item.genreLabel || item.genre) options.genre.add(item.genreLabel || item.genre);
           if (item.level) options.level.add(item.level);
           if (item.dayOfWeek) options.dayOfWeek.add(item.dayOfWeek);
           if (item.startTime) options.timeHour.add(item.startTime.split(':')[0]);
@@ -99,7 +99,7 @@
           if (filters.dayOfWeek.length > 0 && !filters.dayOfWeek.includes(item.dayOfWeek)) return false;
           if (filters.timeHour.length > 0 && !filters.timeHour.includes(item.startTime.split(':')[0])) return false;
           if (filters.storeName.length > 0 && !filters.storeName.includes(item.storeName)) return false;
-          if (filters.genre.length > 0 && !filters.genre.includes(item.genre)) return false;
+          if (filters.genre.length > 0 && !filters.genre.includes(item.genreLabel || item.genre)) return false;
           if (filters.level.length > 0 && !filters.level.includes(item.level)) return false;
           
           // 女性限定フィルター
