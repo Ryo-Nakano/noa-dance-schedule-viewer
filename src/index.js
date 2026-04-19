@@ -3,6 +3,7 @@ import { OpenUploadDialogOperation } from '@/operations/open_upload_dialog_opera
 import { CreateHeaderOperation } from '@/operations/create_header_operation.js';
 import { JsonUploadOperation } from '@/operations/json_upload_operation.js';
 import { UpdateLessonsOperation } from '@/operations/update_lessons_operation.js';
+import { TestOperation } from '@/operations/test_operation.js';
 
 global.onOpen = () => {
   const operation = new CreateMenuOperation();
@@ -26,5 +27,10 @@ global.processJsonUploadOperation = (jsonString) => {
 
 global.updateLessonsOperation = () => {
   const operation = new UpdateLessonsOperation();
+  operation.run();
+};
+
+global.TEST = () => {
+  const operation = new TestOperation();
   operation.run();
 };
