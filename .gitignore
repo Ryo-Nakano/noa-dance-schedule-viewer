@@ -4,3 +4,4 @@ dist/dialog.html
 .clasp.json
 .env
 src/operations/test_operation.js
+dist/view.html
