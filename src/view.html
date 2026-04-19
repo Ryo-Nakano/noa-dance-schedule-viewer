@@ -48,6 +48,28 @@
       return [];
     };
 
+    const FILTER_STORAGE_KEY = 'noa-lesson-filters';
+
+    const getInitialFilters = () => {
+      const defaultFilters = {
+        dayOfWeek: [],
+        timeHour: [],
+        storeName: [],
+        genre: [],
+        level: [],
+        womanOnly: 'none'
+      };
+      try {
+        const saved = localStorage.getItem(FILTER_STORAGE_KEY);
+        if (saved) {
+          return { ...defaultFilters, ...JSON.parse(saved) };
+        }
+      } catch (e) {
+        console.error('Failed to load filters from localStorage:', e);
+      }
+      return defaultFilters;
+    };
+
     const App = () => {
       const [data, setData] = useState(getInitialData);
       const [isLoading, setIsLoading] = useState(false); // 初期データはあるので false
@@ -57,14 +79,7 @@
       const [displayLimit, setDisplayLimit] = useState(ITEMS_PER_PAGE);
 
       // フィルター状態
-      const [filters, setFilters] = useState({
-        dayOfWeek: [],
-        timeHour: [],
-        storeName: [],
-        genre: [],
-        level: [],
-        womanOnly: 'none' // 'none', 'only', 'exclude'
-      });
+      const [filters, setFilters] = useState(getInitialFilters);
 
       // フィルター用オプションの抽出
       const filterOptions = useMemo(() => {
@@ -120,6 +135,11 @@
         setDisplayLimit(ITEMS_PER_PAGE);
       }, [filters]);
 
+      // フィルターが変更されたら localStorage に保存
+      useEffect(() => {
+        localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
+      }, [filters]);
+
       const toggleFilter = (category, value) => {
         setFilters(prev => {
           const currentValues = prev[category];
@@ -142,6 +162,7 @@
 
       const clearAllFilters = () => {
         setFilters({ dayOfWeek: [], timeHour: [], storeName: [], genre: [], level: [], womanOnly: 'none' });
+        localStorage.removeItem(FILTER_STORAGE_KEY);
       };
 
       const selectAllInCategory = (category) => {
