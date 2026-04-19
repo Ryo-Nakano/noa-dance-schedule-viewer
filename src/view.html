@@ -55,6 +55,7 @@
     };
 
     const FILTER_STORAGE_KEY = 'noa-lesson-filters';
+    const FAVORITE_STORAGE_KEY = 'noa-favorite-filters';
     const THEME_STORAGE_KEY = 'noa-theme';
 
     const getInitialTheme = () => {
@@ -87,6 +88,16 @@
       return defaultFilters;
     };
 
+    const getInitialFavorites = () => {
+      try {
+        const saved = localStorage.getItem(FAVORITE_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+        console.error('Failed to load favorites from localStorage:', e);
+        return [];
+      }
+    };
+
     const App = () => {
       const [data, setData] = useState(getInitialData);
       const [isLoading, setIsLoading] = useState(false); // 初期データはあるので false
@@ -97,6 +108,8 @@
 
       // フィルター状態
       const [filters, setFilters] = useState(getInitialFilters);
+      const [favorites, setFavorites] = useState(getInitialFavorites);
+      const [newFavoriteName, setNewFavoriteName] = useState('');
       const [theme, setTheme] = useState(getInitialTheme);
 
       // テーマの適用
@@ -173,6 +186,11 @@
         localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
       }, [filters]);
 
+      // お気に入り条件が変更されたら localStorage に保存
+      useEffect(() => {
+        localStorage.setItem(FAVORITE_STORAGE_KEY, JSON.stringify(favorites));
+      }, [favorites]);
+
       const toggleFilter = (category, value) => {
         setFilters(prev => {
           const currentValues = prev[category];
@@ -204,6 +222,32 @@
 
       const clearCategory = (category) => {
         setFilters(prev => ({ ...prev, [category]: [] }));
+      };
+
+      const saveCurrentFilter = () => {
+        if (!newFavoriteName.trim()) {
+          alert('名前を入力してください');
+          return;
+        }
+        const newFavorite = {
+          id: Date.now(),
+          name: newFavoriteName.trim(),
+          filters: { ...filters }
+        };
+        setFavorites(prev => [...prev, newFavorite]);
+        setNewFavoriteName('');
+        alert('保存しました');
+      };
+
+      const applyFavorite = (favorite) => {
+        setFilters(favorite.filters);
+        setIsFilterModalOpen(false);
+      };
+
+      const deleteFavorite = (id) => {
+        if (confirm('この条件を削除しますか？')) {
+          setFavorites(prev => prev.filter(f => f.id !== id));
+        }
       };
 
       const toggleAccordion = (key) => {
@@ -401,6 +445,54 @@
                 </div>
 
                 <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 pb-4">
+                  {/* お気に入り条件セクション */}
+                  <div className="mt-2 bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
+                    <div className="p-4">
+                      <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                        <Icon name="star" className="w-4 h-4 text-yellow-500" />
+                        お気に入り条件
+                      </h3>
+                      
+                      {favorites.length > 0 && (
+                        <div className="flex overflow-x-auto whitespace-nowrap hide-scrollbar items-center gap-2 mb-4">
+                          {favorites.map(fav => (
+                            <div key={fav.id} className="flex items-center gap-1 pl-3 pr-1 py-1 rounded-full bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700 shrink-0">
+                              <button
+                                onClick={() => applyFavorite(fav)}
+                                className="text-sm font-medium text-blue-700 dark:text-blue-300 hover:underline"
+                              >
+                                {fav.name}
+                              </button>
+                              <button
+                                onClick={() => deleteFavorite(fav.id)}
+                                className="p-1 text-blue-400 hover:text-red-500 transition-colors"
+                              >
+                                <Icon name="trash-2" className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newFavoriteName}
+                          onChange={(e) => setNewFavoriteName(e.target.value)}
+                          placeholder="条件の名前（例: 月曜ジャズ）"
+                          className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                          onClick={saveCurrentFilter}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                        >
+                          <Icon name="save" className="w-4 h-4" />
+                          保存
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700 mt-2">
                     {/* 女性限定フィルター（アコーディオン同列） */}
                     <div className="bg-white dark:bg-gray-800">
