@@ -282,7 +282,7 @@
                             <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4">
                               <div className="font-bold text-gray-900 flex items-center gap-1.5 text-base">
                                 <Icon name="user" className="w-4 h-4 text-gray-400" />
-                                {item.instructorName}
+                                {item.nickname || item.instructorName}
                               </div>
                               <div className="text-sm text-gray-600 flex items-center gap-2">
                                 <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
@@ -441,14 +441,16 @@
                 <div className="overflow-y-auto p-5">
                   <div className="flex flex-col items-center text-center mb-6 pb-6 border-b border-gray-100">
                     {selectedItem.instructorImageUrl ? (
-                      <img src={selectedItem.instructorImageUrl} alt={selectedItem.instructorName} className="w-24 h-24 object-cover rounded-full shadow-md bg-gray-100 mb-3" />
+                      <img src={selectedItem.instructorImageUrl} alt={selectedItem.nickname || selectedItem.instructorName} className="w-24 h-24 object-cover rounded-full shadow-md bg-gray-100 mb-3" />
                     ) : (
                       <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center shadow-md mb-3 border-2 border-white">
                         <Icon name="user" className="w-10 h-10 text-gray-300" />
                       </div>
                     )}
-                    <h4 className="text-xl font-bold text-gray-900">{selectedItem.instructorName}</h4>
-                    {selectedItem.nickname && <p className="text-sm text-gray-500 mb-3">({selectedItem.nickname})</p>}
+                    <h4 className="text-xl font-bold text-gray-900">{selectedItem.nickname || selectedItem.instructorName}</h4>
+                    {selectedItem.nickname && selectedItem.instructorName && (
+                      <p className="text-sm text-gray-500 mb-3">({selectedItem.instructorName})</p>
+                    )}
                     <div className="flex items-center gap-2 justify-center mt-1">
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{selectedItem.genre}</span>
                       <span className="px-3 py-1 rounded-full text-xs font-medium border border-gray-200 text-gray-600">{selectedItem.level}</span>
@@ -456,15 +458,6 @@
                   </div>
 
                   <div className="bg-gray-50 rounded-xl p-4 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Icon name="calendar" className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
-                      <div>
-                        <div className="text-xs text-gray-500 font-medium mb-0.5">日付</div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {selectedItem.date} <span className="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded text-xs ml-1 font-mono">{getDayLabel(selectedItem.dayOfWeek)}</span>
-                        </div>
-                      </div>
-                    </div>
                     <div className="flex items-start gap-3">
                       <Icon name="clock" className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
                       <div>
