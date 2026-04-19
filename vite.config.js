@@ -25,6 +25,14 @@ export default defineConfig({
           fs.copyFileSync(srcHtml, destHtml);
           console.log('dialog.html has been copied to dist folder');
         }
+
+        // Copy view.html
+        const srcView = path.resolve(__dirname, 'src/view.html');
+        const destView = path.join(destDir, 'view.html');
+        if (fs.existsSync(srcView)) {
+          fs.copyFileSync(srcView, destView);
+          console.log('view.html has been copied to dist folder');
+        }
       }
     }
   ],

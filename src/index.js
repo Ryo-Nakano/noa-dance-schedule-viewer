@@ -4,6 +4,7 @@ import { CreateHeaderOperation } from '@/operations/create_header_operation.js';
 import { JsonUploadOperation } from '@/operations/json_upload_operation.js';
 import { UpdateLessonsOperation } from '@/operations/update_lessons_operation.js';
 import { TestOperation } from '@/operations/test_operation.js';
+import { GetLessonsWebViewOperation } from '@/operations/get_lessons_web_view_operation.js';
 
 global.onOpen = () => {
   const operation = new CreateMenuOperation();
@@ -33,4 +34,12 @@ global.updateLessonsOperation = () => {
 global.TEST = () => {
   const operation = new TestOperation();
   operation.run();
+};
+
+/**
+ * Web アプリのエントリーポイント
+ */
+global.doGet = (e) => {
+  const operation = new GetLessonsWebViewOperation();
+  return operation.run();
 };

@@ -30,8 +30,8 @@ export class Lessons extends BoundSheetData {
             lessonId: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.ID] - 1],
             date: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.DATE] - 1],
             dayOfWeek: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.DAY_OF_WEEK] - 1],
-            startTime: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.START_TIME] - 1],
-            endTime: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.END_TIME] - 1],
+            startTime: this._formatTime(row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.START_TIME] - 1]),
+            endTime: this._formatTime(row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.END_TIME] - 1]),
             storeName: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.STORE_NAME] - 1],
             studioName: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.STUDIO_NAME] - 1],
             genre: row[cols[NAMED_RANGES.BOUND_SHEETS.LESSONS.GENRE] - 1],
@@ -57,5 +57,20 @@ export class Lessons extends BoundSheetData {
     this._allCache = null;
     this._sheetCache = null;
     this._namedRangeColsCache = null;
+  }
+
+  /**
+   * 時刻値を HH:mm 形式の文字列に変換します
+   * @param {Date|string} value 時刻値
+   * @returns {string} フォーマットされた時刻文字列
+   * @private
+   */
+  static _formatTime(value) {
+    if (value instanceof Date) {
+      const hours = value.getHours().toString().padStart(2, "0");
+      const minutes = value.getMinutes().toString().padStart(2, "0");
+      return `${hours}:${minutes}`;
+    }
+    return value;
   }
 }

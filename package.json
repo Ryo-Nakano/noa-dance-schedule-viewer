@@ -8,7 +8,10 @@
     "build:watch": "vite build --watch",
     "push": "clasp push",
     "push:watch": "clasp push --watch",
-    "deploy": "vite build && clasp push"
+    "deploy": "vite build && clasp push && clasp deploy --deploymentId $npm_package_config_deployId --description \"deployed by clasp\""
+  },
+  "config": {
+    "deployId": "AKfycbxUCtfScdnVEuYtRc_Gqn1i9G-RtZpBFsyZKzZdRjf0ceCaEAEjCmBMQ_k_V3MOyr48NQ"
   },
   "keywords": [],
   "author": "",
